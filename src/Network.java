@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 class Network implements Serializable {
 
-    static int propogation_depth = 3;
-    static double decay_ratio = 0.7;
+    static int propogation_depth = 2;
+    static double decay_ratio = 0.6;
 
 
     ArrayList<Neuron> network;
@@ -178,7 +178,7 @@ class Network implements Serializable {
         for (Neuron neuron : network) neuron.stimulation = 0;
 
 
-        for (int k = 0; k < 200; k++) {
+        for (int k = 0; k < 20_000; k++) {
 
             for (int i = 0; i < stimulation_results.size()-1; i++) {
 

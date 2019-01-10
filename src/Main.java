@@ -87,11 +87,8 @@ class Main {
             out = new ObjectOutputStream(fos);
             BufferedOutputStream bos = new BufferedOutputStream(out);
 
-            System.out.println("Rech1");
             out.writeObject(network);
-            System.out.println("Rech2");
             out.flush();
-            System.out.println("Rech3");
 
 
             bos.close();
