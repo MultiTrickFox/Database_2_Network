@@ -11,12 +11,12 @@ class Main {
 
     static boolean load_model       = true;
 
-    static boolean train_on_dataset = true;
+    static boolean train_on_dataset = false;
     static String database_path     = "pkmn.csv";
 
 
-    static String[] stimuli = new String[]{"Flying", "Dragon"};
-    static double[] ratios  = new double[]{0.9, 0.4};
+    static String[] stimuli = new String[]{"Water", "Fighting"};
+    static double[] ratios  = new double[]{1.0, 0.8};
 
 
 
@@ -84,10 +84,15 @@ class Main {
         try {
 
             FileOutputStream fos = new FileOutputStream("network.ser");
-            BufferedOutputStream bos = new BufferedOutputStream(fos);
-            out = new ObjectOutputStream(bos);
+            out = new ObjectOutputStream(fos);
+            BufferedOutputStream bos = new BufferedOutputStream(out);
+
+            System.out.println("Rech1");
             out.writeObject(network);
+            System.out.println("Rech2");
             out.flush();
+            System.out.println("Rech3");
+
 
             bos.close();
             fos.close();
