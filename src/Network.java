@@ -39,6 +39,8 @@ class Network implements Serializable {
 
         for (int row_id = 0; row_id < hm_rows; row_id++) {
 
+            System.out.println("training: data " + row_id);
+
             ArrayList<String> row_data = Database_rowOriented.get(row_id);
 
             for (int col_id = 0; col_id < hm_columns; col_id++) {

@@ -43,7 +43,7 @@ class Main {
 
         display_results(stim_results);
 
-        
+
     }
 
 
