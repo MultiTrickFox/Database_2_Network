@@ -1,4 +1,5 @@
 import java.io.*;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -8,27 +9,31 @@ class Main {
 
 
 
+    static boolean train_on_dataset = true;
+    static String database_path     = "pkmn.csv";
 
 
-    static String database_path = "sample_database.txt";
-
-
-    static String[] stimuli = new String[]{"Marketing", "Car"};
-    static double[] ratios = new double[]{0.9, 0.4};
-
-
+    static String[] stimuli = new String[]{"Normal", "Flying"};
+    static double[] ratios  = new double[]{0.9, 0.4};
 
 
 
     public static void main(String[] args) {
 
+
         Network network = get_network();
 
-        Object[] db = import_txt(database_path);
 
-        network.update_network((ArrayList) db[0], (ArrayList) db[1]);
+        if (train_on_dataset) {
 
-        save_network(network);
+            Object[] db = parse_csv(database_path);
+
+            network.update_network((ArrayList) db[0], (ArrayList) db[1]);
+
+            save_network(network);
+
+        }
+
 
         ArrayList<Object[]> stim_results = network
 
@@ -36,9 +41,9 @@ class Main {
                         new ArrayList<>(Arrays.asList(
                                 stimuli)), ratios);
 
-
         display_results(stim_results);
 
+        
     }
 
 
@@ -89,98 +94,56 @@ class Main {
     }
 
 
-    static Object[] import_txt(String txt_path){
+    static Object[] parse_csv(String csv_path){
 
 
         ArrayList<ArrayList<String>> Database_rowOriented, Database_colOriented;
         Database_rowOriented = new ArrayList<>() ; Database_colOriented = new ArrayList<>();
 
+        String line; String path = FileSystems.getDefault().getPath(csv_path).toAbsolutePath().toString();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+
+            while ((line = br.readLine()) != null) {
+
+                String[] row = line.split(",");
+
+                Database_rowOriented.add(new ArrayList<>(Arrays.asList(row)));
+
+            }
+
+            int hm_rows = Database_rowOriented.get(0).size();
+
+            for (int i = 0; i < hm_rows; i++) Database_colOriented.add(new ArrayList<>());
+
+            int this_col = -1;
+            for (ArrayList<String> col : Database_colOriented) {
+                this_col++;
+
+                for (ArrayList<String> row : Database_rowOriented) col.add(row.get(this_col));
+
+            }
+
+            System.out.println(".csv Database loaded.");
+
+            return new Object[]{
+
+                    Database_rowOriented,
+                    Database_colOriented
+
+            } ;
 
 
-        //Network network = import_txt(database_path);
+        } catch (IOException e) {
 
-        ///
+            e.printStackTrace();
 
-        ArrayList<String> sample_row1 = new ArrayList<>();
-        ArrayList<String> sample_row2 = new ArrayList<>();
-        ArrayList<String> sample_row3 = new ArrayList<>();
-        ArrayList<String> sample_row4 = new ArrayList<>();
+            System.out.println("Database load failed.");
 
-        ArrayList<String> sample_col1 = new ArrayList<>();
-        ArrayList<String> sample_col2 = new ArrayList<>();
-        ArrayList<String> sample_col3 = new ArrayList<>();
-        ArrayList<String> sample_col4 = new ArrayList<>();
+            return new Object[]{null, null};
 
-        ///
-
-        sample_row1.add("Person1");
-        sample_row1.add("Car");
-        sample_row1.add("Marketing");
-        sample_row1.add("Dumb");
-
-        sample_row2.add("Person2");
-        sample_row2.add("Nature");
-        sample_row2.add("Comp Sci");
-        sample_row2.add("Clever");
-
-        sample_row3.add("Person3");
-        sample_row3.add("House");
-        sample_row3.add("Comp Sci");
-        sample_row3.add("Clever");
-
-        sample_row4.add("Person4");
-        sample_row4.add("House");
-        sample_row4.add("Marketing");
-        sample_row4.add("Dumb");
-
-        ///
-
-        sample_col1.add("Person1");
-        sample_col1.add("Person2");
-        sample_col1.add("Person3");
-        sample_col1.add("Person4");
-
-        sample_col2.add("Car");
-        sample_col2.add("Nature");
-        sample_col2.add("House");
-        sample_col2.add("House");
-
-        sample_col3.add("Marketing");
-        sample_col3.add("Comp Sci");
-        sample_col3.add("Comp Sci");
-        sample_col3.add("Marketing");
-
-        sample_col4.add("Dumb");
-        sample_col4.add("Clever");
-        sample_col4.add("Clever");
-        sample_col4.add("Dumb");
-
-        ///
-
-
-
-        Database_rowOriented.add(sample_row1);
-        Database_rowOriented.add(sample_row2);
-        Database_rowOriented.add(sample_row3);
-        Database_rowOriented.add(sample_row4);
-
-        Database_colOriented.add(sample_col1);
-        Database_colOriented.add(sample_col2);
-        Database_colOriented.add(sample_col3);
-        Database_colOriented.add(sample_col4);
-
-
-
-        // todo : read the txt and append to row and col oriented arraylists here.
-
-
-
-        return new Object[]{
-
-                Database_rowOriented,
-                Database_colOriented
-
-        } ;
+        }
     }
+
 
 }
