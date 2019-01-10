@@ -7,14 +7,14 @@ class Runner {
 
     static String database_path = "sample_database.txt";
 
-    static String[] queries = new String[]{"Marketing", "Car"};
-
-                                        // todo : add here importance coefficient
+    static String[] stimuli = new String[]{"Marketing", "Car"};
+    static double[] ratios = new double[]{0.9, 0.4};
 
 
     public static void main(String[] args) {
 
-        //Network network = Network.create_from_txt(database_path);
+
+        //Network network = import_txt(database_path);
 
         ///
 
@@ -37,17 +37,17 @@ class Runner {
 
         sample_row2.add("Person2");
         sample_row2.add("Nature");
-        sample_row1.add("Comp Sci");
+        sample_row2.add("Comp Sci");
         sample_row2.add("Clever");
 
         sample_row3.add("Person3");
         sample_row3.add("House");
-        sample_row1.add("Comp Sci");
+        sample_row3.add("Comp Sci");
         sample_row3.add("Clever");
 
         sample_row4.add("Person4");
         sample_row4.add("House");
-        sample_row1.add("Marketing");
+        sample_row4.add("Marketing");
         sample_row4.add("Dumb");
 
         ///
@@ -89,7 +89,8 @@ class Runner {
 
         ///
 
-        Network network = new Network(Database_rowOriented, Database_colOriented);
+        Network network = new Network();
+        network.update_network(Database_rowOriented, Database_colOriented);
 
         ///
 
@@ -98,16 +99,39 @@ class Runner {
         // todo: save neural net here.
 
 
+        for (Object[] result : network.stimulate(
+                   new ArrayList<>(Arrays.asList(
+                               stimuli)), ratios))
+        {
+            String value = (String) result[0];
+            int strength = (int) result[1];
 
-        ArrayList<Object[]> query_results = network.stimulate(new ArrayList<>(Arrays.asList(queries)));
-
-        for (Object[] result : query_results) {
-
-            Neuron result_neuron = (Neuron) result[0];
-            Integer strength = (Integer) result[1];
-
-            System.out.println("Neuron: " + result_neuron.value + " Strength: " + strength);
-
+            System.out.println("Value: " + value + " Strength: " + strength);
         }
+
+
     }
+
+
+    static Network import_txt(String txt_path){
+
+        // todo 2: check to see if previously created neural net exists, if so, just update it.
+
+        Network network = new Network();
+
+
+        ArrayList<ArrayList<String>> Database_rowOriented = new ArrayList<>();
+        ArrayList<ArrayList<String>> Database_colOriented = new ArrayList<>();
+
+
+
+        network.update_network(Database_rowOriented, Database_colOriented);
+
+
+        // todo : read the txt and append to row and col oriented arraylists here.
+
+
+        return network;
+    }
+
 }

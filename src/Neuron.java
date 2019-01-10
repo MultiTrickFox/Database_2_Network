@@ -7,7 +7,7 @@ class Neuron{
 
     String value;
     ArrayList<Object[]> connections;
-    Integer stimulation;
+    int stimulation;
 
 
     Neuron(String value){
