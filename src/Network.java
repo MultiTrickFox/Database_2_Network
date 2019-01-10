@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 class Network {
 
-    static int propogation_depth = 3;
-    static double decay_ratio = 0.8;
+    static int propogation_depth = 2;
+    static double decay_ratio = 0.7;
 
 
     ArrayList<Neuron> network;
@@ -64,11 +64,11 @@ class Network {
                         if (is_connected) {
 
                             Object[] link = current_neuron.connections.get(conn_index);
-                            link[1] = (int) link[1] + 1;
+                            link[1] = (double) link[1] + 1;
 
                         }
 
-                        else current_neuron.connections.add(new Object[]{other_neuron, 1});
+                        else current_neuron.connections.add(new Object[]{other_neuron, 1.0});
 
                     }
                 }
@@ -78,10 +78,10 @@ class Network {
                 for (String col_val : col_data) {
                     this_row_id ++;
 
-                    int similarity_value;
+                    double similarity_value;
 
-                    if (current_val.equals(col_val)) similarity_value =  1;
-                    else                             similarity_value = -1;
+                    if (current_val.equals(col_val)) similarity_value =  1.0;
+                    else                             similarity_value = -1.0;
 
                     ArrayList<String> other_row_data = Database_rowOriented.get(this_row_id);
 
@@ -100,7 +100,7 @@ class Network {
                             if (is_connected) {
 
                                 Object[] link = current_neuron.connections.get(conn_index);
-                                link[1] = (int) link[1] + similarity_value;
+                                link[1] = (double) link[1] + similarity_value;
 
                             }
 
@@ -126,11 +126,36 @@ class Network {
                 
                 if (neuron.value.equals(stimulant)) {
 
-                    for (Object[] connection : neuron.connections) {
+                    ArrayList<Object[]> to_connect = new ArrayList<>();
+
+                    to_connect.addAll(neuron.connections);
+
+                    for (int r = 0; r < propogation_depth-1; r++) {
+
+                        ArrayList<Object[]> recursive_connect = new ArrayList<>();
+
+
+
+
+                        for (Object[] connection : to_connect) {
+
+                            double decayed, ratio; ratio = (r+1) * decay_ratio;
+                            if ((double) connection[1] > 0) decayed = Math.pow((double) connection[1], ratio);
+                            else                            decayed = -Math.pow(-((double) connection[1]), ratio);
+
+                            recursive_connect.add(new Object[]{connection[0], decayed});
+
+                        }
+
+                        to_connect.addAll(recursive_connect);
+
+                    }
+
+
+                    for (Object[] connection : to_connect) {
                         
                         Neuron connected_neuron = (Neuron) connection[0];
-                        double connection_size = (int) connection[1] * propogations[s_id];
-
+                        double connection_size = (double) connection[1] * propogations[s_id];
 
                         boolean is_already_added = false;
 
@@ -144,6 +169,9 @@ class Network {
                         if (!is_already_added) stimulation_results.add(new Object[]{connected_neuron.value, connection_size});
 
                     }
+
+
+
                 }
             }
         }

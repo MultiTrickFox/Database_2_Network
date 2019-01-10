@@ -7,7 +7,7 @@ class Runner {
 
     static String database_path = "sample_database.txt";
 
-    static String[] stimuli = new String[]{"Car", "Marketing"};
+    static String[] stimuli = new String[]{"Marketing", "Car"};
     static double[] ratios = new double[]{0.9, 0.4};
 
 
