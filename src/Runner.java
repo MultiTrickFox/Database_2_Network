@@ -7,7 +7,7 @@ class Runner {
 
     static String database_path = "sample_database.txt";
 
-    static String[] stimuli = new String[]{"Marketing", "Car"};
+    static String[] stimuli = new String[]{"Car", "Marketing"};
     static double[] ratios = new double[]{0.9, 0.4};
 
 
@@ -104,7 +104,7 @@ class Runner {
                                stimuli)), ratios))
         {
             String value = (String) result[0];
-            int strength = (int) result[1];
+            double strength = (double) result[1];
 
             System.out.println("Value: " + value + " Strength: " + strength);
         }

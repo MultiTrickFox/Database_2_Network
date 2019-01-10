@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 class Network {
 
+    static int propogation_depth = 3;
+    static double decay_ratio = 0.8;
+
 
     ArrayList<Neuron> network;
 
@@ -115,7 +118,9 @@ class Network {
 
         ArrayList<Object[]> stimulation_results = new ArrayList<>();
 
+        int s_id = -1;
         for (String stimulant : stimulants) {
+            s_id++;
 
             for (Neuron neuron : network) {
                 
@@ -124,7 +129,7 @@ class Network {
                     for (Object[] connection : neuron.connections) {
                         
                         Neuron connected_neuron = (Neuron) connection[0];
-                        int connection_size = (int) connection[1];
+                        double connection_size = (int) connection[1] * propogations[s_id];
 
 
                         boolean is_already_added = false;
@@ -132,7 +137,7 @@ class Network {
                         for (Object[] added : stimulation_results) if (added[0].equals(connected_neuron.value)) {
 
                             is_already_added = true;
-                            added[1]         = ((int) added[1]) + connection_size;
+                            added[1]         = ((double) added[1]) + connection_size;
 
                         }
 
@@ -143,13 +148,13 @@ class Network {
             }
         }
 
-        reset_stimulations();
+        for (Neuron neuron : network) neuron.stimulation = 0;
 
         for (int k = 0; k < 10; k++) {
 
             for (int i = 0; i < stimulation_results.size()-1; i++) {
 
-                if ((int) stimulation_results.get(i)[1] < (int) stimulation_results.get(i+1)[1]) {
+                if ((double) stimulation_results.get(i)[1] < (double) stimulation_results.get(i+1)[1]) {
 
                     Object[] temp = stimulation_results.get(i);
                     stimulation_results.set(i, stimulation_results.get(i+1));
@@ -160,13 +165,6 @@ class Network {
         }
 
         return stimulation_results;
-    }
-
-
-    void reset_stimulations(){
-
-        for (Neuron neuron : network) neuron.stimulation = 0;
-
     }
 
 
