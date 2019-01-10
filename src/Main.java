@@ -56,8 +56,13 @@ class Main {
             ObjectInputStream in;
             try {
 
-                in = new ObjectInputStream(new FileInputStream("network.ser"));
+                FileInputStream fis = new FileInputStream("network.ser");
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                in = new ObjectInputStream(fis);
                 Network obj = (Network) in.readObject();
+
+                fis.close();
+                bis.close();
                 in.close();
                 System.out.println("Network loaded.");
                 return obj;
