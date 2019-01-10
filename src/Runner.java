@@ -9,10 +9,12 @@ class Runner {
 
     static String[] queries = new String[]{"Marketing", "Car"};
 
+                                        // todo : add here importance coefficient
+
 
     public static void main(String[] args) {
 
-        //NeuralNet neuralNet = NeuralNet.create_from_txt(database_path);
+        //Network network = Network.create_from_txt(database_path);
 
         ///
 
@@ -87,15 +89,17 @@ class Runner {
 
         ///
 
-        NeuralNet neuralNet = new NeuralNet(Database_rowOriented, Database_colOriented);
+        Network network = new Network(Database_rowOriented, Database_colOriented);
 
         ///
 
 
 
+        // todo: save neural net here.
 
 
-        ArrayList<Object[]> query_results = neuralNet.stimulate(new ArrayList<>(Arrays.asList(queries)));
+
+        ArrayList<Object[]> query_results = network.stimulate(new ArrayList<>(Arrays.asList(queries)));
 
         for (Object[] result : query_results) {
 

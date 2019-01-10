@@ -2,13 +2,13 @@ import java.util.ArrayList;
 
 
 
-class NeuralNet {
+class Network {
 
 
     ArrayList<Neuron> network;
 
 
-    NeuralNet(ArrayList<ArrayList<String>> Database_rowOriented, ArrayList<ArrayList<String>> Database_colOriented){
+    Network(ArrayList<ArrayList<String>> Database_rowOriented, ArrayList<ArrayList<String>> Database_colOriented){
 
         network = new ArrayList<>();
 
@@ -59,7 +59,7 @@ class NeuralNet {
             }
         }
         
-        for (Neuron n : network) {
+        for (Neuron n : network) {          // todo : recheck what gets removed. and whats not....
 
             ArrayList<Object[]> to_remove = new ArrayList<>();
             
@@ -80,7 +80,7 @@ class NeuralNet {
 
     ArrayList<Object[]> stimulate(ArrayList<String> stimulants){
 
-        ArrayList<Object[]> stimulated_neurons = new ArrayList<>();
+        ArrayList<Object[]> stimulation_results = new ArrayList<>();
 
         for (String stimulant : stimulants) {
 
@@ -96,28 +96,41 @@ class NeuralNet {
 
                         boolean is_already_added = false;
 
-                        for (Object[] added : stimulated_neurons) if (((Neuron) added[0]).value.equals(connected_neuron.value)) {
+                        for (Object[] added : stimulation_results) if (((Neuron) added[0]).value.equals(connected_neuron.value)) {
 
                             is_already_added = true;
                             added[1]         = ((Integer) added[1]) + connection_size;
 
                         }
 
-                        if (!is_already_added) stimulated_neurons.add(new Object[]{connected_neuron, connection_size});
+                        if (!is_already_added) stimulation_results.add(new Object[]{connected_neuron, connection_size});
 
                     }
                 }
             }
         }
 
-        return stimulated_neurons;
+        // todo : order wrt object[1] (strengths).
+
+        reset_stimulations();
+
+        return stimulation_results;
     }
 
 
+    void reset_stimulations(){
+
+        for (Neuron neuron : network) neuron.stimulation = 0;
+
+    }
+
+
+    static Network create_from_txt(String txt_path){
+
+        // todo 2: check to see if previously created neural net exists, if so update it.
 
 
 
-    static NeuralNet create_from_txt(String txt_path){
 
         ArrayList<ArrayList<String>> Database_rowOriented = new ArrayList<>();
         ArrayList<ArrayList<String>> Database_colOriented = new ArrayList<>();
@@ -126,24 +139,8 @@ class NeuralNet {
         // todo : read the txt and append to row and col oriented arraylists here.
 
 
-        return new NeuralNet(Database_rowOriented, Database_colOriented);
+        return new Network(Database_rowOriented, Database_colOriented);
     }
 
-}
-
-
-class Neuron{
-
-    String value;
-    ArrayList<Object[]> connections;
-    Integer stimulation;
-
-    Neuron(String value){
-
-        this.value = value;
-        this.connections = new ArrayList<>();
-        this.stimulation = 0;
-
-    }
 
 }
