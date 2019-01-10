@@ -9,6 +9,8 @@ class Main {
 
 
 
+    static boolean load_model       = true;
+
     static boolean train_on_dataset = true;
     static String database_path     = "pkmn.csv";
 
@@ -49,16 +51,24 @@ class Main {
 
     static Network get_network(){
 
-        ObjectInputStream in;
-        try {
+        if (load_model) {
 
-            in = new ObjectInputStream(new FileInputStream("network"));
-            Network obj = (Network) in.readObject();
-            in.close();
-            System.out.println("Network loaded.");
-            return obj;
+            ObjectInputStream in;
+            try {
 
-        } catch (IOException | ClassNotFoundException e) { System.out.println("Network created."); return new Network(); }
+                in = new ObjectInputStream(new FileInputStream("network"));
+                Network obj = (Network) in.readObject();
+                in.close();
+                System.out.println("Network loaded.");
+                return obj;
+
+            } catch (IOException | ClassNotFoundException e) { }
+
+        }
+
+        System.out.println("Network created.");
+
+        return new Network();
 
     }
 
