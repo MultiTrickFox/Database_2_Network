@@ -15,7 +15,7 @@ class Main {
     static String database_path     = "pkmn.csv";
 
 
-    static String[] stimuli = new String[]{"Normal", "Flying"};
+    static String[] stimuli = new String[]{"Flying", "Dragon"};
     static double[] ratios  = new double[]{0.9, 0.4};
 
 
@@ -56,7 +56,7 @@ class Main {
             ObjectInputStream in;
             try {
 
-                in = new ObjectInputStream(new FileInputStream("network"));
+                in = new ObjectInputStream(new FileInputStream("network.ser"));
                 Network obj = (Network) in.readObject();
                 in.close();
                 System.out.println("Network loaded.");
@@ -78,8 +78,14 @@ class Main {
         ObjectOutputStream out;
         try {
 
-            out = new ObjectOutputStream(new FileOutputStream("network",false));
+            FileOutputStream fos = new FileOutputStream("network.ser");
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+            out = new ObjectOutputStream(bos);
             out.writeObject(network);
+            out.flush();
+
+            bos.close();
+            fos.close();
             out.close();
             System.out.println("Network saved.");
 
@@ -112,7 +118,10 @@ class Main {
 
         String line; String path = FileSystems.getDefault().getPath(csv_path).toAbsolutePath().toString();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+        try {
+
+            FileReader fr = new FileReader(path);
+            BufferedReader br = new BufferedReader(fr);
 
             while ((line = br.readLine()) != null) {
 
@@ -136,6 +145,9 @@ class Main {
 
             System.out.println(".csv Database loaded.");
 
+            fr.close();
+            br.close();
+
             return new Object[]{
 
                     Database_rowOriented,
@@ -153,6 +165,7 @@ class Main {
             return new Object[]{null, null};
 
         }
+
     }
 
 
