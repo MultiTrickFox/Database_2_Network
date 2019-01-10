@@ -1,10 +1,11 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
 
-class Network {
+class Network implements Serializable {
 
-    static int propogation_depth = 2;
+    static int propogation_depth = 3;
     static double decay_ratio = 0.7;
 
 
@@ -135,8 +136,6 @@ class Network {
                         ArrayList<Object[]> recursive_connect = new ArrayList<>();
 
 
-
-
                         for (Object[] connection : to_connect) {
 
                             double decayed, ratio; ratio = (r+1) * decay_ratio;
@@ -169,16 +168,15 @@ class Network {
                         if (!is_already_added) stimulation_results.add(new Object[]{connected_neuron.value, connection_size});
 
                     }
-
-
-
                 }
             }
         }
 
+
         for (Neuron neuron : network) neuron.stimulation = 0;
 
-        for (int k = 0; k < 10; k++) {
+
+        for (int k = 0; k < 200; k++) {
 
             for (int i = 0; i < stimulation_results.size()-1; i++) {
 
@@ -191,6 +189,12 @@ class Network {
                 }
             }
         }
+
+        ArrayList<Object[]> to_remove = new ArrayList<>();
+
+        for (String stim : stimulants) for (Object[] res : stimulation_results) if (stim.equals(res[0])) to_remove.add(res);
+
+        for (Object[] rm : to_remove) stimulation_results.remove(stimulation_results.indexOf(rm));
 
         return stimulation_results;
     }
