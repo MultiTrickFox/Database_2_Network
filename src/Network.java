@@ -6,7 +6,7 @@ import java.util.ArrayList;
 class Network implements Serializable {
 
     static int propogation_depth = 2;
-    static double decay_ratio = 0.6;
+    static double decay_ratio = 0.8;
 
 
     ArrayList<Neuron> network;

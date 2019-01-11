@@ -15,8 +15,8 @@ class Main {
     static String database_path     = "pkmn.csv";
 
 
-    static String[] stimuli = new String[]{"Water", "Fighting"};
-    static double[] ratios  = new double[]{1.0, 0.8};
+    static String[] stimuli = new String[]{"Flying", "Water"};
+    static double[] ratios  = new double[]{100, 25};
 
 
 
@@ -108,7 +108,12 @@ class Main {
             String value = (String) result[0];
             double strength = (double) result[1];
 
-            System.out.println(value + " : " + strength);
+            try { Integer.valueOf(value); } catch (Exception e) {
+
+                System.out.println(value + " : " + strength);
+
+            }
+
         }
 
 
