@@ -15,8 +15,8 @@ class Main {
     static String database_path     = "pkmn.csv";
 
 
-    static String[] stimuli = new String[]{"Flying", "Water"};
-    static double[] ratios  = new double[]{100, 25};
+    static String[] stimuli = new String[]{"Fire", "3"};
+    static double[] ratios  = new double[]{80, 25};
 
 
 
