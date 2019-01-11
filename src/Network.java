@@ -25,12 +25,15 @@ class Network implements Serializable {
 
             for (String value : row) {
 
-                boolean already_added = false;
+                if (!value.equals("")) {
 
-                for (Neuron neuron : network) if (neuron.value.equals(value)) already_added = true;
+                    boolean already_added = false;
 
-                if (!already_added) network.add(new Neuron(value));
+                    for (Neuron neuron : network) if (neuron.value.equals(value)) already_added = true;
 
+                    if (!already_added) network.add(new Neuron(value));
+
+                }
             }
         }
 
@@ -39,7 +42,7 @@ class Network implements Serializable {
 
         for (int row_id = 0; row_id < hm_rows; row_id++) {
 
-            System.out.println("training: data " + row_id);
+            // System.out.println("training: data " + row_id);
 
             ArrayList<String> row_data = Database_rowOriented.get(row_id);
 
@@ -49,50 +52,18 @@ class Network implements Serializable {
 
 
                 String current_val = row_data.get(col_id);
-                Neuron current_neuron = null ; for (Neuron neuron : network) if (neuron.value.equals(current_val)) current_neuron = neuron;
 
 
-                for (String row_val : row_data) {
+                if (!current_val.equals("")) {
 
-                    if (!row_val.equals(current_val)) {
-
-                        Neuron other_neuron = null; for (Neuron neuron : network) if (neuron.value.equals(row_val)) other_neuron = neuron;
-                        boolean is_connected = false;
-                        int conn_index = 0; int i = 0;
-
-                        for (Object[] connection : current_neuron.connections) if (connection[0] == other_neuron)
-
-                            { is_connected = true; conn_index = i; } else i++;
-
-                        if (is_connected) {
-
-                            Object[] link = current_neuron.connections.get(conn_index);
-                            link[1] = (double) link[1] + 1;
-
-                        }
-
-                        else current_neuron.connections.add(new Object[]{other_neuron, 1.0});
-
-                    }
-                }
+                    Neuron current_neuron = null ; for (Neuron neuron : network) if (neuron.value.equals(current_val)) current_neuron = neuron;
 
 
-                int this_row_id = -1;
-                for (String col_val : col_data) {
-                    this_row_id ++;
+                    for (String row_val : row_data) {
 
-                    double similarity_value;
+                        if (!row_val.equals(current_val) && !row_val.equals("")) {
 
-                    if (current_val.equals(col_val)) similarity_value =  1.0;
-                    else                             similarity_value = -1.0;
-
-                    ArrayList<String> other_row_data = Database_rowOriented.get(this_row_id);
-
-                    for (String other_row_val : other_row_data) {
-
-                        if (!other_row_val.equals(col_val)) {
-
-                            Neuron other_neuron = null ; for (Neuron neuron : network) if (neuron.value.equals(other_row_val)) other_neuron = neuron;
+                            Neuron other_neuron = null; for (Neuron neuron : network) if (neuron.value.equals(row_val)) other_neuron = neuron;
                             boolean is_connected = false;
                             int conn_index = 0; int i = 0;
 
@@ -103,12 +74,55 @@ class Network implements Serializable {
                             if (is_connected) {
 
                                 Object[] link = current_neuron.connections.get(conn_index);
-                                link[1] = (double) link[1] + similarity_value;
+                                link[1] = (double) link[1] + 1;
 
                             }
 
-                            else current_neuron.connections.add(new Object[]{other_neuron, similarity_value});
+                            else current_neuron.connections.add(new Object[]{other_neuron, 1.0});
 
+                        }
+                    }
+
+
+                    int this_row_id = -1;
+                    for (String col_val : col_data) {
+                        this_row_id ++;
+
+                        if (!col_val.equals("")) {
+
+                            double similarity_value;
+
+                            if (current_val.equals(col_val)) similarity_value =  1.0;
+                            else                             similarity_value = -1.0;
+
+                            ArrayList<String> other_row_data = Database_rowOriented.get(this_row_id);
+
+                            for (String other_row_val : other_row_data) {
+
+                                if (!other_row_val.equals("")) {
+
+                                    if (!other_row_val.equals(col_val)) {
+
+                                        Neuron other_neuron = null ; for (Neuron neuron : network) if (neuron.value.equals(other_row_val)) other_neuron = neuron;
+                                        boolean is_connected = false;
+                                        int conn_index = 0; int i = 0;
+
+                                        for (Object[] connection : current_neuron.connections) if (connection[0] == other_neuron)
+
+                                        { is_connected = true; conn_index = i; } else i++;
+
+                                        if (is_connected) {
+
+                                            Object[] link = current_neuron.connections.get(conn_index);
+                                            link[1] = (double) link[1] + similarity_value;
+
+                                        }
+
+                                        else current_neuron.connections.add(new Object[]{other_neuron, similarity_value});
+
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -117,19 +131,21 @@ class Network implements Serializable {
     }
 
 
-    ArrayList<Object[]> stimulate(ArrayList<String> stimulants, double[] propogations){
+    ArrayList<Object[]> stimulate(ArrayList<String> stimulants, double[] prop_rates){
 
         ArrayList<Object[]> stimulation_results = new ArrayList<>();
 
         int s_id = -1;
-        for (String stimulant : stimulants) {
+        for (String to_stimulate : stimulants) {
             s_id++;
 
             for (Neuron neuron : network) {
                 
-                if (neuron.value.equals(stimulant)) {
+                if (to_stimulate.equals(neuron.value)) {
+
 
                     ArrayList<Object[]> to_connect = new ArrayList<>();
+
 
                     to_connect.addAll(neuron.connections);
 
@@ -156,7 +172,7 @@ class Network implements Serializable {
                     for (Object[] connection : to_connect) {
                         
                         Neuron connected_neuron = (Neuron) connection[0];
-                        double connection_size = (double) connection[1] * propogations[s_id];
+                        double connection_size = (double) connection[1] * prop_rates[s_id];
 
                         boolean is_already_added = false;
 

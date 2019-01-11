@@ -9,14 +9,14 @@ class Main {
 
 
 
-    static boolean load_model       = true;
+    static boolean load_model       = false;
 
-    static boolean train_on_dataset = false;
+    static boolean train_on_dataset = true;
     static String database_path     = "pkmn.csv";
 
 
-    static String[] stimuli = new String[]{"Fire", "3"};
-    static double[] ratios  = new double[]{80, 25};
+    static String[] stimuli = new String[]{"Water", "False","1"};
+    static double[] ratios  = new double[]{0.6, 0.8, 0.2};
 
 
 
@@ -103,17 +103,18 @@ class Main {
 
     static void display_results(ArrayList<Object[]> stim_results){
 
+        int i = -1;
         for (Object[] result : stim_results)
-        {
-            String value = (String) result[0];
-            double strength = (double) result[1];
+        { i++;
+            if (i < 30) {
+                String value = (String) result[0];
+                double strength = (double) result[1];
 
-            try { Integer.valueOf(value); } catch (Exception e) {
+                try { Integer.valueOf(value); } catch (Exception e) {
 
-                System.out.println(value + " : " + strength);
-
+                    System.out.println(value + " : " + strength);
+                }
             }
-
         }
 
 
